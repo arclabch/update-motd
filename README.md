@@ -6,6 +6,39 @@
 
 However, it will **NOT** run on Ubuntu, as Ubuntu already has a similar script, but the scripts (`XX-*`) will run on Ubuntu with a bit of adaptation.
 
+## Sample default output
+
+```
+                         ____              __
+                        / __/___  ____    / /_  ____ ______
+                       / /_/ __ \/ __ \  / __ \/ __ `/ ___/
+                      / __/ /_/ / /_/ / / /_/ / /_/ / /
+                     /_/  \____/\____(_)_.___/\__,_/_/
+
+LOCALHOST ······································································
+Hostname: sample.server.domain.tld
+ Address: 192.168.1.42 (vmx0)
+  System: FreeBSD 12.0-RELEASE (amd64 GENERIC)
+
+USEFUL INFORMATION ·····························································
+This is the default information.txt file. Replace this with useful content, such
+as information about the role of this system or usual maintenance commands, or
+remove this file entirely to disable this section.
+
+SYSTEM CHANGELOG ·······························································
+2019-01-04T10:52  lr  Setup of the new motd system; installation of changelog.
+
+DISCLAIMER ·····································································
+By accessing this system, your actions may be intercepted, monitored, recorded,
+copied, audited, inspected, and disclosed to third parties. Unauthorized or
+improper use of this system will result in civil and criminal penalties and/or
+administrative or disciplinary action, as appropriate. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use.
+
+                                        motd refreshed on 2019-01-06 at 21:04:48
+```
+
 ## Usage
 
 Simply call its name from the command line.

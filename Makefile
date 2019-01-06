@@ -54,6 +54,10 @@ all: build
 
 build:
 	@echo "Preparing version $(VERSION) for $(KERNEL)."
+	@echo "Build options:"
+	@echo "- Destination is $(PREFIX)/bin"
+	@echo "- Config folder is $(CONFIG)/etc"
+	@echo "- Working directory is $(WORKDIR)"
 ifeq ($(CROND),1)
 	@echo "- /etc/cron.d exists"
 else
