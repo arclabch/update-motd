@@ -1,0 +1,1 @@
+This is the default information.txt file. Replace this with useful content, such as information about the role of this system or usual maintenance commands, or remove this file entirely to disable this section.

@@ -1,0 +1,13 @@
+#
+# update-motd cron file
+#
+
+# Use /bin/sh and set the path, as needed
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Run it at boot
+@reboot root update-motd
+
+# Then run it every hour
+@hourly root update-motd

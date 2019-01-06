@@ -1,0 +1,34 @@
+#!/bin/sh
+
+#
+# This script displays a simple disclaimer, if it exists.
+# This script will simply load disclaimer.txt from the scripts' directory and
+# displays it over 80 columns.
+#
+
+# Source the configuration file to get the folder path
+. %%PREFIX%%/etc/update-motd.conf
+
+# The disclaimer file
+# It is important that this file can be read by anyone on Ubuntu
+DISC_FILE="disclaimer.txt"
+
+# Check if $PATH is set, and set a temporary one if needed
+if [ -z "$PATH" ]; then
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+fi
+
+# Check if the disclaimer exists before printing anything
+if [ -f "$SCRIPTS_DIR/$DISC_FILE" ]; then
+
+    # Section heading
+    printf "\033[%smDISCLAIMER ·····································································\033[0m\n" $COLOR_SECTION
+
+
+    # Display the header
+    fold -w 80 -s $SCRIPTS_DIR/disclaimer.txt
+
+    # End spacing
+    echo ""
+
+fi

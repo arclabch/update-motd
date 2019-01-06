@@ -1,0 +1,55 @@
+#!/bin/sh
+
+#
+# update-motd version %%VERSION%%
+#
+# Copyright (C) 2019 ARClab, Lionel Riem - https://arclab.ch/
+#
+# Use of this source code is governed by the MIT license that can be found in
+# the LICENSE file or at https://github.com/arclabch/update-motd
+#
+
+# Source the configuration file
+. %%PREFIX%%/etc/update-motd.conf
+
+# Check if $PATH is set, and set a temporary one if needed
+if [ -z "$PATH" ]; then
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+fi
+
+# Prepare a temporary file to receive the output of the scripts
+TMPFILE=`mktemp /tmp/motd.XXXXXX 2> /dev/null` || exit 1
+
+# Find all files starting with two numbers and a hyphen in the scripts folder
+FILES=`find $SCRIPTS_DIR -type f -name "[0-9][0-9]-*" -print | sort`
+
+# Get the user ID
+UID=`id -u`
+
+# Run the scripts found, if executable
+for f in $FILES; do
+    if [ -x "$f" ]; then
+        $f >> $TMPFILE
+    fi
+done
+
+# If user is root, add a timestampd and save the output to the MotD file without
+# displaying anything
+if [ $UID -eq 0 ]; then
+
+    # Add the timestamp, if desired
+    if [ "$TIMESTAMP" = true ]; then
+        DATE_NOW=`date +"%Y-%m-%d"`
+        TIME_NOW=`date +"%H:%M:%S"`
+        printf "\033[90m%80s\033[0m\n\n" "motd refreshed on $DATE_NOW at $TIME_NOW" >> $TMPFILE
+    fi
+
+    cat $TMPFILE > $MOTD_FILE
+
+# If a user, simply print out the generated motd to the screen
+else
+    cat $TMPFILE
+fi
+
+# Remove temporary file
+rm -f $TMPFILE

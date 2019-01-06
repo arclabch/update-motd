@@ -1,0 +1,28 @@
+#!/bin/sh
+
+#
+# This script displays the last 5 entries in the system's changelog.
+# It uses https://github.com/arclabch/changelog.
+#
+
+# Source the configuration file to get the folder path
+. %%PREFIX%%/etc/update-motd.conf
+
+# Check if $PATH is set, and set a temporary one if needed
+if [ -z "$PATH" ]; then
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+fi
+
+# Check if changelog is installed on this system
+if command -v changelog >/dev/null 2>&1; then
+
+    # Some heading
+    printf "\033[%smSYSTEM CHANGELOG ·······························································\033[0m\n" $COLOR_SECTION
+
+    # Get the last 5 entries
+    changelog show -l 5 -w 80
+
+    # End spacing
+    echo " "
+
+fi

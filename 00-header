@@ -1,0 +1,35 @@
+#!/bin/sh
+
+#
+# This script displays a simple header.
+# It can be anything such as a figlet ASCII art.
+# This script will simply load header.txt from the same directory.
+# Put whatever you want in it. You should limit yourself to a width of 80
+# columns for best results.
+#
+
+# Source the configuration file
+. %%PREFIX%%/etc/update-motd.conf
+
+# Header file
+# Note that the header file is not formated to 80 columns like the other
+# scripts do.
+HDR_FILE="header.txt"
+
+# Check if $PATH is set, and set a temporary one if needed
+if [ -z "$PATH" ]; then
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+fi
+
+# Check if the header exists before printing anything
+if [ -f "$SCRIPTS_DIR/$HDR_FILE" ]; then
+
+    # Print the header
+    printf "\033[%sm" $COLOR_HDR
+    cat $SCRIPTS_DIR/header.txt
+    printf "\033[0m"
+
+    # End spacing
+    echo " "
+
+fi

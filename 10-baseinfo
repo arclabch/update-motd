@@ -1,0 +1,119 @@
+#!/bin/sh
+
+#
+# This script displays basic information about the system.
+# It was written to be as portable as possible and should produce acceptable
+# results on most Unix-like systems.
+#
+
+# Source the configuration file
+. %%PREFIX%%/etc/update-motd.conf
+
+# Check if $PATH is set, and set a temporary one if needed
+if [ -z "$PATH" ]; then
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+fi
+
+# Display a section separation
+printf "\033[%smLOCALHOST ······································································\033[0m\n" $COLOR_SECTION
+
+# Hostname
+HOSTNAME=`hostname`
+
+# Network settings
+if [ -z "$INT_IP" ]; then
+    INT_IP=`ifconfig -a | grep "<UP" | grep -v lo | head -n1 | cut -d: -f 1`
+fi
+IPV4=`ifconfig $INT_IP | grep inet | head -1 | awk '{ print $2 }'`
+IPV6=`ifconfig $INT_IP | grep inet6 | grep -v "fe80::" | head -1 | awk '{ print $2 }'`
+if [ -z "$IPV6" ]; then
+    IP="$IPV4 ($INT_IP)"
+else
+    IP="$IPV4 / $IPV6 ($INT_IP)"
+fi
+
+# OS identification
+SYSOS=`uname`
+case "$SYSOS" in
+
+    # FreeBSD has no distinction between kernel and OS, so just use the
+    # kernel ident and architecture for the kernel part
+    "FreeBSD")
+        DIST=`uname -sr`
+        KERNEL=`uname -im`
+    ;;
+
+    # NetBSD has no distinction between kernel and OS either, but no kernel
+    # ident flag in uname like FreeBSD. So let's do some awking.
+    "NetBSD")
+        DIST=`uname -sr`
+        VARIANT=`uname -v | awk -F'(' '{ print $2 }' | awk -F')' '{ print $1 }'`
+        ARCH=`uname -m`
+        KERNEL="$VARIANT $ARCH"
+    ;;
+
+    # Linux distributions can give us their identity through different methods,
+    # so we must test a few possibilities
+    "Linux")
+
+        # First try Systemd's os-release
+        if [ -f /etc/os-release ]; then
+            . /etc/os-release
+            DIST="$PRETTY_NAME"
+
+        # Then lsb_release's /etc file
+        elif [ -f /etc/lsb-release ]; then
+            . /etc/lsb-release
+            DIST="$DISTRIB_DESCRIPTION"
+
+        # Then directly lsb_release if the file was not available
+        elif [ command -v lsb_release >/dev/null 2>&1 ]; then
+            DIST=`lsb_release -sd`
+
+        # If all else fails, give up
+        else
+            DIST="Unknown Linux Distribution"
+        fi
+
+        # Get the kernel version
+        KERNEL=`uname -srm`
+    ;;
+
+    # SunOS variants too
+    "SunOS")
+
+        # First try Systemd's os-release (Oracle Solaris)
+        if [ -f /etc/os-release ]; then
+            . /etc/os-release
+            DIST="$PRETTY_NAME"
+
+        # Then /etc/release, SunOS's "issue" equivalent
+        elif [ -f /etc/release ]; then
+            DIST=`head -1 /etc/release | xargs`
+        
+        # If all else fails, using SunOS's uname "o" and "v" flags
+        else
+            DISTNAME=`uname -o`
+            DISTVER=`uname -v`
+            DIST="$DISTNAME $DISTVER"
+        fi
+
+        # Get the kernel version
+        KERNEL=`uname -srm`
+    ;;
+
+    # Other Unix-like systems, including OpenBSD
+    *)
+        DIST=`uname -sr`
+        KERNEL=`uname -vm`
+    ;;
+esac
+OS="$DIST ($KERNEL)"
+
+# Print it all
+echo "Hostname: $HOSTNAME"
+echo " Address: $IP"
+echo "  System: $OS"
+
+# End spacing
+echo " "

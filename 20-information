@@ -1,0 +1,31 @@
+#!/bin/sh
+
+#
+# This script displays information from a file and formats it to 80 columns.
+# That's it.
+#
+
+# Source the configuration file to get the folder path
+. %%PREFIX%%/etc/update-motd.conf
+
+# Information file
+# It is important that this file can be read by anyone on Ubuntu
+MSG_FILE="information.txt"
+
+# Check if $PATH is set, and set a temporary one if needed
+if [ -z "$PATH" ]; then
+    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+fi
+
+# Check if the file exists
+if [ -f "$SCRIPTS_DIR/$MSG_FILE" ]; then
+
+    # Display section header
+    printf "\033[%smUSEFUL INFORMATION ·····························································\033[0m\n" $COLOR_SECTION
+
+    # Display the information
+    fold -w 80 -s $SCRIPTS_DIR/$MSG_FILE
+
+    # End spacing
+    echo " "
+fi
